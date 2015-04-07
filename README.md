@@ -63,6 +63,13 @@ in strict FIFO order.
 
 This tube works the same way as 'fifottl' and 'utube' queues.
 
+## `stube` - queue with separate queues
+
+Works the same way as `fifo`. At this queue there is no `ttl`,` ttr`.
+The difference is that each `put` and` take` takes in the options parameter 
+`stube` - mikroqueue name. And it is necessary to pull out the key data only, 
+with no blocking access to the next task, as in `utube`.
+
 # The supporting schema
 
 This purpose of this part is to give you an idea how the various
@@ -189,10 +196,10 @@ This method returns the created task.
 Get a task for execution:
 
 ```lua
-queue.tube.tube_name:take([timeout])
+queue.tube.tube_name:take([options])
 ```
 
-Waits `timeout` seconds until a `READY` task appears in the queue.
+Waits `options.timeout` seconds until a `READY` task appears in the queue.
 Returns either a task object or nil.
 
 The consumer signals successful task execution with `ack` method:
