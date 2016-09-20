@@ -168,6 +168,16 @@ function tube.truncate(self)
     self.raw:truncate()
 end
 
+-- find all tasks by user_id
+function tube.findByUserId(self, user_id, opts)
+
+end
+
+-- delete user tasks with specified names
+-- names array
+function tube.deleteByUserId(self, user_id, names, opts)
+end
+
 -- methods
 local method = {}
 

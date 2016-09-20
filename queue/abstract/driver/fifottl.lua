@@ -15,6 +15,8 @@ local i_ttr             = 5
 local i_pri             = 6
 local i_created         = 7
 local i_data            = 8
+local i_user_id         = 9
+local i_task_name       = 10
 
 local function time(tm)
     tm = tm and tm * 1000000 or fiber.time64()
@@ -53,6 +55,7 @@ function tube.create_space(space_name, opts)
     space:create_index('watch',
         { type = 'tree', parts = { i_status, 'str', i_next_event, 'num' },
             unique = false})
+    space:create_index('user_id', { type = 'tree', parts = { i_user_id, 'num' }})
     return space
 end
 
@@ -169,6 +172,8 @@ function method.put(self, data, opts)
     local ttl = opts.ttl or self.opts.ttl
     local ttr = opts.ttr or self.opts.ttr
     local pri = opts.pri or self.opts.pri or 0
+    local user_id = opts.user_id or 0
+    local task_name = opts.task_name or ''
 
     local next_event
 
@@ -189,7 +194,9 @@ function method.put(self, data, opts)
             time(ttr),
             pri,
             time(),
-            data
+            data,
+            user_id,
+            task_name
     }
     self:on_task_change(task, 'put')
     return task
