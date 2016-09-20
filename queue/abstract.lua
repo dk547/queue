@@ -170,12 +170,13 @@ end
 
 -- find all tasks by user_id
 function tube.findByUserId(self, user_id, opts)
-
+    return self.raw:findByUserId(user_id, opts)
 end
 
 -- delete user tasks with specified names
 -- names array
 function tube.deleteByUserId(self, user_id, names, opts)
+    return self.raw:deleteByUserId(user_id, names, opts)
 end
 
 -- methods

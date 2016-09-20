@@ -55,7 +55,7 @@ function tube.create_space(space_name, opts)
     space:create_index('watch',
         { type = 'tree', parts = { i_status, 'str', i_next_event, 'num' },
             unique = false})
-    space:create_index('user_id', { type = 'tree', parts = { i_user_id, 'num' }})
+    space:create_index('user_id', { type = 'tree', parts = { i_user_id, 'num' }, unique = false, if_not_exists = true})
     return space
 end
 
@@ -296,6 +296,36 @@ end
 
 function method.truncate(self)
     self.space:truncate()
+end
+
+function method.findByUserId(self, user_id, opts)
+    local res = {}
+    for _, t in self.space.index.user_id:pairs({user_id}) do
+        local match = true
+
+        if (opts and opts.names) then
+            match = false
+
+            for k,v in pairs(opts.names) do
+                if (v == t[i_task_name]) then
+                    match = true
+                end
+            end
+        end
+
+        if (match == true) then
+            table.insert(res, self:normalize_task(t))
+        end
+    end
+    return res
+end
+
+function method.deleteByUserId(self, user_id, names, opts)
+    local for_delete = self:findByUserId(user_id, {names = names})
+
+    for _,v in pairs(for_delete) do
+        self:delete(v[i_id])
+    end
 end
 
 return tube
